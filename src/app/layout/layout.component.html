@@ -1,2 +1,7 @@
-<classic-layout></classic-layout>
+@if (layout === 'empty') {
+    <empty-layout></empty-layout>
+}
+@if (layout === 'classic') {
+    <classic-layout></classic-layout>
+}
 <settings></settings>

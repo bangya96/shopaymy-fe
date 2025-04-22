@@ -15,6 +15,7 @@ import { FUSE_VERSION } from '@fuse/version';
 import { Subject, combineLatest, filter, map, takeUntil } from 'rxjs';
 import { SettingsComponent } from './common/settings/settings.component';
 import { ClassicLayoutComponent } from './layouts/classic/classic.component';
+import { EmptyLayoutComponent } from './layouts/empty/empty.component';
 
 
 @Component({
@@ -25,6 +26,7 @@ import { ClassicLayoutComponent } from './layouts/classic/classic.component';
     standalone: true,
     imports: [
         ClassicLayoutComponent,
+        EmptyLayoutComponent,
         SettingsComponent,
     ],
 })
@@ -155,6 +157,7 @@ export class LayoutComponent implements OnInit, OnDestroy {
         }
 
         // 1. Set the layout from the config
+        this.layout = this.config.layout;
 
         // 2. Get the query parameter from the current route and
         // set the layout and save the layout to the config
