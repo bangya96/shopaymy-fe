@@ -60,27 +60,21 @@ export class AuthService {
             return throwError('User is already logged in.');
         }
 
-        // First, get the CSRF token
-        return this._httpClient.get(`${this._apiUrl}/sanctum/csrf-cookie`).pipe(
-            switchMap(() => {
-                // Then attempt to login
-                return this._httpClient.post(`${this._apiUrl}/login`, credentials, {
-                    withCredentials: true // Important for Sanctum
-                }).pipe(
-                    switchMap((response: any) => {
-                        // Store the access token in the local storage
-                        this.accessToken = response.token;
+        return this._httpClient.post(`${this._apiUrl}/login`, credentials, {
+            withCredentials: true // Important for Sanctum
+        }).pipe(
+            switchMap((response: any) => {
+                // Store the access token in the local storage
+                this.accessToken = response.token;
 
-                        // Set the authenticated flag to true
-                        this._authenticated = true;
+                // Set the authenticated flag to true
+                this._authenticated = true;
 
-                        // Store the user on the user service
-                        this._userService.user = response.user;
+                // Store the user on the user service
+                this._userService.user = response.user;
 
-                        // Return a new observable with the response
-                        return of(response);
-                    })
-                );
+                // Return a new observable with the response
+                return of(response);
             })
         );
     }
