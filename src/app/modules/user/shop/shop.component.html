@@ -1,0 +1,58 @@
+<div
+    class="absolute inset-0 flex min-w-0 flex-col overflow-y-auto"
+    cdkScrollable
+>
+    <!-- Main -->
+    <div class="flex flex-auto flex-col items-center p-6 sm:p-10">
+        <!-- Title -->
+        <div
+            class="mt-4 text-3xl font-extrabold leading-7 tracking-tight sm:leading-10 md:mt-24 md:text-6xl"
+        >
+            All Shops
+        </div>
+
+        <!-- Boards -->
+        <div
+            class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 md:mt-16 lg:grid-cols-4"
+        >
+            @for (shop of shops; track shop.id) {
+                <a
+                    class="bg-card flex w-56 flex-col items-start rounded-lg p-6 shadow transition-shadow duration-150 ease-in-out hover:shadow-xl"
+                    [routerLink]="[shop.id]"
+                >
+                    <div
+                        class="flex items-center justify-center rounded-full bg-primary-50 p-4 text-primary-700 dark:bg-primary dark:text-on-primary"
+                    >
+                        <img [src]="shop.logo" [alt]="shop.name" class="w-8 h-8" />
+                    </div>
+                    <!-- Title -->
+                    <div class="mt-5 text-lg font-medium leading-5">
+                        {{ shop.name }}
+                    </div>
+                    <!-- Description -->
+                    <div class="text-secondary mt-0.5 line-clamp-2">
+                        {{ shop.description }}
+                    </div>
+                    <!-- Last activity -->
+                    <div class="font-md mt-4 flex items-center text-md">
+                        <div class="text-secondary">Updated:</div>
+                        <div class="ml-1">
+                            {{ shop.updatedAt | date:'short' }}
+                        </div>
+                    </div>
+                </a>
+            }
+            <!-- New board -->
+            <div
+                class="flex w-56 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 transition-colors duration-150 ease-in-out hover:bg-hover min-h-48"
+                (click)="openComposeDialog()"
+                (keypress)="openComposeDialog()"
+            >
+                <mat-icon
+                    class="text-hint icon-size-12"
+                    [svgIcon]="'heroicons_outline:plus'"
+                ></mat-icon>
+            </div>
+        </div>
+    </div>
+</div>

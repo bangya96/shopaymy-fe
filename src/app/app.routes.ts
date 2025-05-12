@@ -45,7 +45,9 @@ export const appRoutes: Route[] = [
             {path: 'forgot-password', loadChildren: () => import('app/modules/auth/forgot-password/forgot-password.routes')},
             {path: 'reset-password', loadChildren: () => import('app/modules/auth/reset-password/reset-password.routes')},
             {path: 'sign-in', loadChildren: () => import('app/modules/auth/sign-in/sign-in.routes')},
-            {path: 'sign-up', loadChildren: () => import('app/modules/auth/sign-up/sign-up.routes')}
+            {path: 'sign-up', loadChildren: () => import('app/modules/auth/sign-up/sign-up.routes')},
+            {path: '404', loadChildren: () => import('app/layout/error/error-404/error-404.routes')},
+            {path: '500', loadChildren: () => import('app/layout/error/error-500/error-500.routes')}
         ]
     },
 
@@ -75,6 +77,7 @@ export const appRoutes: Route[] = [
         },
         children: [
             {path: 'example', loadChildren: () => import('app/modules/admin/example/example.routes')},
+            {path: 'user', loadChildren: () => import('app/modules/user/user.routes')},
         ]
     }
 ];
