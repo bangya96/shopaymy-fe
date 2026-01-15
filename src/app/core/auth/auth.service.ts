@@ -1,16 +1,29 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
+import { Apollo } from 'apollo-angular';
 import { AuthUtils } from 'app/core/auth/auth.utils';
 import { UserService } from 'app/core/user/user.service';
-import { catchError, Observable, of, switchMap, throwError } from 'rxjs';
-import { environment } from '../../../environments/environment';
+import { catchError, Observable, of, switchMap, throwError, map } from 'rxjs';
+import {
+    LOGIN_MUTATION,
+    REGISTER_MUTATION,
+    LOGOUT_MUTATION,
+} from '../graphql/graphql.mutations';
+import { ME_QUERY } from '../graphql/graphql.queries';
+import {
+    LoginInput,
+    RegisterInput,
+    LoginMutationResponse,
+    RegisterMutationResponse,
+    LogoutMutationResponse,
+    MeQueryResponse,
+    AuthResponse,
+} from '../graphql/graphql.types';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
     private _authenticated: boolean = false;
-    private _httpClient = inject(HttpClient);
-    private _userService = inject(UserService);
-    private _apiUrl = environment.apiUrl;
+    private readonly _apollo = inject(Apollo);
+    private readonly _userService = inject(UserService);
 
     // -----------------------------------------------------------------------------------------------------
     // @ Accessors
@@ -33,72 +46,90 @@ export class AuthService {
 
     /**
      * Forgot password
-     *
-     * @param email
+     * Note: This endpoint might not be available in GraphQL yet
      */
     forgotPassword(email: string): Observable<any> {
-        return this._httpClient.post(`${this._apiUrl}/api/auth/forgot-password`, email);
+        // TODO: Implement when GraphQL mutation is available
+        return throwError(() => new Error('Forgot password not implemented in GraphQL'));
     }
 
     /**
      * Reset password
-     *
-     * @param password
+     * Note: This endpoint might not be available in GraphQL yet
      */
     resetPassword(password: string): Observable<any> {
-        return this._httpClient.post(`${this._apiUrl}/api/auth/reset-password`, password);
+        // TODO: Implement when GraphQL mutation is available
+        return throwError(() => new Error('Reset password not implemented in GraphQL'));
     }
 
     /**
-     * Sign in
+     * Sign in using GraphQL
      *
      * @param credentials
      */
-    signIn(credentials: { email: string; password: string }): Observable<any> {
+    signIn(credentials: LoginInput): Observable<AuthResponse> {
         // Throw error, if the user is already logged in
         if (this._authenticated) {
-            return throwError('User is already logged in.');
+            return throwError(() => new Error('User is already logged in.'));
         }
 
-        return this._httpClient.post(`${this._apiUrl}/login`, credentials, {
-            withCredentials: true // Important for Sanctum
-        }).pipe(
-            switchMap((response: any) => {
-                // Store the access token in the local storage
-                this.accessToken = response.token;
-
-                // Set the authenticated flag to true
-                this._authenticated = true;
-
-                // Store the user on the user service
-                this._userService.user = response.user;
-
-                // Return a new observable with the response
-                return of(response);
-            })
-        );
-    }
-
-    /**
-     * Sign in using the access token
-     */
-    signInUsingToken(): Observable<any> {
-        // Sign in using the token
-        return this._httpClient
-            .get(`${this._apiUrl}/user`, {
-                withCredentials: true
+        return this._apollo
+            .mutate<LoginMutationResponse>({
+                mutation: LOGIN_MUTATION,
+                variables: {
+                    input: {
+                        email: credentials.email,
+                        password: credentials.password,
+                    },
+                },
             })
             .pipe(
-                catchError(() =>
-                    // Return false
-                    of(false)
-                ),
-                switchMap((response: any) => {
+                map((result) => {
+                    if (result.error) {
+                        throw new Error(result.error.message);
+                    }
+                    return result.data.login;
+                }),
+                switchMap((response: AuthResponse) => {
+                    // Store the access token in the local storage
+                    this.accessToken = response.token;
+
                     // Set the authenticated flag to true
                     this._authenticated = true;
 
                     // Store the user on the user service
-                    this._userService.user = response;
+                    this._userService.user = response.user;
+
+                    // Return the response
+                    return of(response);
+                })
+            );
+    }
+
+    /**
+     * Sign in using the access token (via GraphQL me query)
+     */
+    signInUsingToken(): Observable<boolean> {
+        // Sign in using the token
+        return this._apollo
+            .query<MeQueryResponse>({
+                query: ME_QUERY,
+                fetchPolicy: 'network-only',
+            })
+            .pipe(
+                catchError(() => of(null)),
+                switchMap((result) => {
+                    // If no result or errors, return false
+                    if (!result || result.error || !result.data) {
+                        this._authenticated = false;
+                        return of(false);
+                    }
+
+                    // Set the authenticated flag to true
+                    this._authenticated = true;
+
+                    // Store the user on the user service
+                    this._userService.user = result.data.me;
 
                     // Return true
                     return of(true);
@@ -107,45 +138,75 @@ export class AuthService {
     }
 
     /**
-     * Sign out
+     * Sign out using GraphQL
      */
     signOut(): Observable<any> {
-        // Remove the access token from the local storage
-        localStorage.removeItem('accessToken');
+        return this._apollo
+            .mutate<LogoutMutationResponse>({
+                mutation: LOGOUT_MUTATION,
+            })
+            .pipe(
+                catchError(() => of(null)),
+                switchMap(() => {
+                    // Remove the access token from the local storage
+                    localStorage.removeItem('accessToken');
 
-        // Set the authenticated flag to false
-        this._authenticated = false;
+                    // Set the authenticated flag to false
+                    this._authenticated = false;
 
-        // Call the logout endpoint
-        return this._httpClient.post(`${this._apiUrl}/logout`, {}, {
-            withCredentials: true
-        });
+                    // Clear Apollo cache
+                    this._apollo.client.clearStore();
+
+                    return of(true);
+                })
+            );
     }
 
     /**
-     * Sign up
+     * Sign up using GraphQL
      *
      * @param user
      */
-    signUp(user: {
-        name: string;
-        email: string;
-        password: string;
-        company: string;
-    }): Observable<any> {
-        return this._httpClient.post(`${this._apiUrl}/api/auth/sign-up`, user);
+    signUp(user: RegisterInput): Observable<AuthResponse> {
+        return this._apollo
+            .mutate<RegisterMutationResponse>({
+                mutation: REGISTER_MUTATION,
+                variables: {
+                    input: {
+                        name: user.name,
+                        email: user.email,
+                        password: user.password,
+                    },
+                },
+            })
+            .pipe(
+                map((result) => {
+                    if (result.error) {
+                        throw new Error(result.error.message);
+                    }
+                    return result.data.register;
+                }),
+                switchMap((response: AuthResponse) => {
+                    // Store the access token in the local storage
+                    this.accessToken = response.token;
+
+                    // Set the authenticated flag to true
+                    this._authenticated = true;
+
+                    // Store the user on the user service
+                    this._userService.user = response.user;
+
+                    // Return the response
+                    return of(response);
+                })
+            );
     }
 
     /**
      * Unlock session
-     *
-     * @param credentials
      */
-    unlockSession(credentials: {
-        email: string;
-        password: string;
-    }): Observable<any> {
-        return this._httpClient.post(`${this._apiUrl}/api/auth/unlock-session`, credentials);
+    unlockSession(credentials: { email: string; password: string }): Observable<any> {
+        return this.signIn(credentials);
     }
 
     /**
@@ -162,7 +223,12 @@ export class AuthService {
             return of(false);
         }
 
-        // If the access token exists, try to get the user
+        // Check if the access token is expired
+        if (AuthUtils.isTokenExpired(this.accessToken)) {
+            return of(false);
+        }
+
+        // If the access token exists and is valid, try to get the user
         return this.signInUsingToken();
     }
 }
