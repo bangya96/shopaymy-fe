@@ -120,3 +120,203 @@ export const PAGE_QUERY = gql`
         }
     }
 `;
+
+// ============================================
+// PRODUCT QUERIES
+// ============================================
+
+/**
+ * Get all products for a specific shop
+ */
+export const PRODUCTS_QUERY = gql`
+    query Products($shopId: Int!) {
+        products(shopId: $shopId) {
+            id
+            shopId
+            name
+            slug
+            description
+            price
+            currency
+            sku
+            images
+            isActive
+            createdAt
+            updatedAt
+        }
+    }
+`;
+
+/**
+ * Get a single product by ID
+ */
+export const PRODUCT_QUERY = gql`
+    query Product($id: Int!) {
+        product(id: $id) {
+            id
+            shopId
+            name
+            slug
+            description
+            price
+            currency
+            sku
+            images
+            isActive
+            createdAt
+            updatedAt
+        }
+    }
+`;
+
+// ============================================
+// ORDER FORM QUERIES
+// ============================================
+
+/**
+ * Get all order forms for a specific shop
+ */
+export const ORDER_FORMS_QUERY = gql`
+    query OrderForms($shopId: Int!) {
+        orderForms(shopId: $shopId) {
+            id
+            shopId
+            pageId
+            productId
+            name
+            fields
+            successMessage
+            redirectUrl
+            isActive
+            createdAt
+            updatedAt
+        }
+    }
+`;
+
+/**
+ * Get a single order form by ID
+ */
+export const ORDER_FORM_QUERY = gql`
+    query OrderForm($id: Int!) {
+        orderForm(id: $id) {
+            id
+            shopId
+            pageId
+            productId
+            name
+            fields
+            successMessage
+            redirectUrl
+            isActive
+            createdAt
+            updatedAt
+        }
+    }
+`;
+
+// ============================================
+// ORDER QUERIES
+// ============================================
+
+/**
+ * Get all orders for a specific shop
+ */
+export const ORDERS_QUERY = gql`
+    query Orders($shopId: Int!) {
+        orders(shopId: $shopId) {
+            id
+            shopId
+            orderFormId
+            productId
+            orderNumber
+            customerName
+            customerEmail
+            customerPhone
+            amount
+            currency
+            status
+            paymentGateway
+            paymentReference
+            paidAt
+            createdAt
+            updatedAt
+        }
+    }
+`;
+
+/**
+ * Get shop order statistics
+ */
+export const SHOP_ORDER_STATS_QUERY = gql`
+    query ShopOrderStats($shopId: Int!) {
+        shopOrderStats(shopId: $shopId) {
+            totalOrders
+            pendingOrders
+            paidOrders
+            totalRevenue
+        }
+    }
+`;
+
+// ============================================
+// PAYMENT GATEWAY SETTINGS QUERIES
+// ============================================
+
+/**
+ * Get payment gateway settings for a specific shop
+ */
+export const PAYMENT_GATEWAY_SETTINGS_QUERY = gql`
+    query PaymentGatewaySettings($shopId: Int!) {
+        paymentGatewaySettings(shopId: $shopId) {
+            id
+            shopId
+            gateway
+            isActive
+            isSandbox
+            createdAt
+            updatedAt
+        }
+    }
+`;
+
+// ============================================
+// SHOP MEMBER QUERIES
+// ============================================
+
+/**
+ * Get all members for a specific shop
+ */
+export const SHOP_MEMBERS_QUERY = gql`
+    query ShopMembers($shopId: Int!) {
+        shopMembers(shopId: $shopId) {
+            userId
+            shopId
+            role
+            createdAt
+            user {
+                id
+                name
+                email
+            }
+        }
+    }
+`;
+
+/**
+ * Get all pending invitations for a specific shop
+ */
+export const SHOP_INVITATIONS_QUERY = gql`
+    query ShopInvitations($shopId: Int!) {
+        shopInvitations(shopId: $shopId) {
+            id
+            shopId
+            email
+            role
+            status
+            expiresAt
+            createdAt
+        }
+    }
+`;
+

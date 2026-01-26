@@ -34,7 +34,7 @@ export class PageGraphqlService {
                 query: PAGES_QUERY,
                 variables: { shopId },
             })
-            .valueChanges.pipe(map((result) => result.data.pages));
+            .valueChanges.pipe(map((result) => result.data.pages as Page[]));
     }
 
     /**
@@ -46,7 +46,7 @@ export class PageGraphqlService {
                 query: PAGE_QUERY,
                 variables: { id },
             })
-            .valueChanges.pipe(map((result) => result.data.page));
+            .valueChanges.pipe(map((result) => result.data.page as Page));
     }
 
     /**

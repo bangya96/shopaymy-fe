@@ -1,0 +1,77 @@
+<div class="absolute inset-0 flex min-w-0 flex-col overflow-y-auto" cdkScrollable>
+    <!-- Main -->
+    <div class="flex flex-auto flex-col items-center p-6 sm:p-10">
+        <!-- Title -->
+        <div class="mt-4 text-3xl font-extrabold leading-7 tracking-tight sm:leading-10 md:mt-24 md:text-6xl">
+            My Shops
+        </div>
+
+        <!-- Loading spinner -->
+        @if (loading) {
+            <div class="mt-16 flex items-center justify-center">
+                <mat-spinner diameter="40"></mat-spinner>
+            </div>
+        }
+
+        <!-- Shops grid -->
+        @if (!loading) {
+            <div class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 md:mt-16 lg:grid-cols-4">
+                @for (shop of shops; track shop.id) {
+                    <a
+                        class="bg-card flex w-56 flex-col items-start rounded-lg p-6 shadow transition-shadow duration-150 ease-in-out hover:shadow-xl"
+                        [routerLink]="[shop.id]"
+                    >
+                        <div class="flex items-center justify-center rounded-full bg-primary-50 p-4 text-primary-700 dark:bg-primary dark:text-on-primary">
+                            @if (shop.logo) {
+                                <img [src]="shop.logo" [alt]="shop.name" class="w-8 h-8 object-cover rounded-full" />
+                            } @else {
+                                <mat-icon [svgIcon]="'heroicons_outline:building-storefront'" class="icon-size-8"></mat-icon>
+                            }
+                        </div>
+                        <!-- Title -->
+                        <div class="mt-5 text-lg font-medium leading-5">
+                            {{ shop.name }}
+                        </div>
+                        <!-- Description -->
+                        <div class="text-secondary mt-0.5 line-clamp-2 min-h-10">
+                            {{ shop.description || 'No description' }}
+                        </div>
+                        <!-- Status -->
+                        <div class="mt-4 flex items-center gap-2">
+                            <span
+                                class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium"
+                                [class.bg-green-100]="shop.isActive"
+                                [class.text-green-800]="shop.isActive"
+                                [class.bg-gray-100]="!shop.isActive"
+                                [class.text-gray-800]="!shop.isActive"
+                            >
+                                {{ shop.isActive ? 'Active' : 'Inactive' }}
+                            </span>
+                        </div>
+                    </a>
+                }
+
+                <!-- New shop card -->
+                <div
+                    class="flex w-56 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 transition-colors duration-150 ease-in-out hover:bg-hover min-h-48"
+                    (click)="openCreateShopDialog()"
+                    (keypress)="openCreateShopDialog()"
+                    tabindex="0"
+                    role="button"
+                >
+                    <mat-icon class="text-hint icon-size-12" [svgIcon]="'heroicons_outline:plus'"></mat-icon>
+                    <span class="mt-2 text-secondary text-sm">Create Shop</span>
+                </div>
+            </div>
+
+            <!-- Empty state -->
+            @if (shops.length === 0) {
+                <div class="mt-8 text-center">
+                    <mat-icon class="text-hint icon-size-24 mb-4" [svgIcon]="'heroicons_outline:building-storefront'"></mat-icon>
+                    <p class="text-secondary text-lg">You don't have any shops yet.</p>
+                    <p class="text-secondary">Click the + button to create your first shop.</p>
+                </div>
+            }
+        }
+    </div>
+</div>

@@ -156,3 +156,169 @@ export const DELETE_PAGE_MUTATION = gql`
         deletePage(id: $id)
     }
 `;
+
+// ============================================
+// PRODUCT MUTATIONS
+// ============================================
+
+/**
+ * Create a new product
+ */
+export const CREATE_PRODUCT_MUTATION = gql`
+    mutation CreateProduct($input: CreateProductInput!) {
+        createProduct(input: $input) {
+            id
+            shopId
+            name
+            slug
+            description
+            price
+            currency
+            sku
+            images
+            isActive
+            createdAt
+            updatedAt
+        }
+    }
+`;
+
+/**
+ * Update an existing product
+ */
+export const UPDATE_PRODUCT_MUTATION = gql`
+    mutation UpdateProduct($input: UpdateProductInput!) {
+        updateProduct(input: $input) {
+            id
+            name
+            slug
+            description
+            price
+            currency
+            sku
+            images
+            isActive
+            updatedAt
+        }
+    }
+`;
+
+/**
+ * Delete a product
+ */
+export const DELETE_PRODUCT_MUTATION = gql`
+    mutation DeleteProduct($id: Int!) {
+        deleteProduct(id: $id)
+    }
+`;
+
+// ============================================
+// ORDER FORM MUTATIONS
+// ============================================
+
+/**
+ * Create a new order form
+ */
+export const CREATE_ORDER_FORM_MUTATION = gql`
+    mutation CreateOrderForm($input: CreateOrderFormInput!) {
+        createOrderForm(input: $input) {
+            id
+            shopId
+            pageId
+            productId
+            name
+            fields
+            successMessage
+            redirectUrl
+            isActive
+            createdAt
+            updatedAt
+        }
+    }
+`;
+
+/**
+ * Update an existing order form
+ */
+export const UPDATE_ORDER_FORM_MUTATION = gql`
+    mutation UpdateOrderForm($input: UpdateOrderFormInput!) {
+        updateOrderForm(input: $input) {
+            id
+            name
+            fields
+            successMessage
+            redirectUrl
+            isActive
+            updatedAt
+        }
+    }
+`;
+
+/**
+ * Delete an order form
+ */
+export const DELETE_ORDER_FORM_MUTATION = gql`
+    mutation DeleteOrderForm($id: Int!) {
+        deleteOrderForm(id: $id)
+    }
+`;
+
+// ============================================
+// PAYMENT GATEWAY SETTINGS MUTATIONS
+// ============================================
+
+/**
+ * Save payment gateway settings
+ */
+export const SAVE_PAYMENT_GATEWAY_SETTINGS_MUTATION = gql`
+    mutation SavePaymentGatewaySettings($input: SavePaymentGatewaySettingsInput!) {
+        savePaymentGatewaySettings(input: $input) {
+            id
+            shopId
+            gateway
+            isActive
+            isSandbox
+            updatedAt
+        }
+    }
+`;
+
+// ============================================
+// SHOP INVITATION MUTATIONS
+// ============================================
+
+/**
+ * Invite a user to a shop
+ */
+export const INVITE_TO_SHOP_MUTATION = gql`
+    mutation InviteToShop($input: InviteToShopInput!) {
+        inviteToShop(input: $input) {
+            id
+            shopId
+            email
+            role
+            status
+            expiresAt
+            createdAt
+        }
+    }
+`;
+
+/**
+ * Accept a shop invitation
+ */
+export const ACCEPT_INVITATION_MUTATION = gql`
+    mutation AcceptInvitation($token: String!) {
+        acceptInvitation(token: $token)
+    }
+`;
+
+/**
+ * Cancel a shop invitation
+ */
+export const CANCEL_INVITATION_MUTATION = gql`
+    mutation CancelInvitation($id: Int!) {
+        cancelInvitation(id: $id)
+    }
+`;
+

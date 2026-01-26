@@ -1,0 +1,75 @@
+<div class="flex flex-col h-full">
+    <!-- Loading -->
+    @if (loading) {
+        <div class="flex items-center justify-center h-full">
+            <mat-spinner diameter="48"></mat-spinner>
+        </div>
+    }
+
+    @if (!loading && shop) {
+        <!-- Header -->
+        <div class="bg-card border-b px-6 py-4">
+            <div class="flex items-center gap-4">
+                <!-- Back button -->
+                <a [routerLink]="'/shops'" mat-icon-button>
+                    <mat-icon [svgIcon]="'heroicons_outline:arrow-left'"></mat-icon>
+                </a>
+
+                <!-- Shop logo -->
+                <div class="flex items-center justify-center rounded-full bg-primary-50 p-3 text-primary-700 dark:bg-primary dark:text-on-primary">
+                    @if (shop.logo) {
+                        <img [src]="shop.logo" [alt]="shop.name" class="w-10 h-10 object-cover rounded-full" />
+                    } @else {
+                        <mat-icon [svgIcon]="'heroicons_outline:building-storefront'" class="icon-size-10"></mat-icon>
+                    }
+                </div>
+
+                <!-- Shop info -->
+                <div class="flex-1">
+                    <h1 class="text-2xl font-bold">{{ shop.name }}</h1>
+                    <p class="text-secondary text-sm">{{ shop.description || 'No description' }}</p>
+                </div>
+
+                <!-- Status badge -->
+                <span
+                    class="inline-flex items-center rounded-full px-3 py-1 text-sm font-medium"
+                    [class.bg-green-100]="shop.isActive"
+                    [class.text-green-800]="shop.isActive"
+                    [class.bg-gray-100]="!shop.isActive"
+                    [class.text-gray-800]="!shop.isActive"
+                >
+                    {{ shop.isActive ? 'Active' : 'Inactive' }}
+                </span>
+            </div>
+
+            <!-- Navigation tabs -->
+            <nav class="mt-4 flex gap-1 overflow-x-auto">
+                @for (item of navItems; track item.route) {
+                    <a
+                        [routerLink]="item.route"
+                        routerLinkActive="bg-primary text-on-primary"
+                        class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors hover:bg-hover"
+                    >
+                        <mat-icon [svgIcon]="item.icon" class="icon-size-5"></mat-icon>
+                        {{ item.label }}
+                    </a>
+                }
+            </nav>
+        </div>
+
+        <!-- Content area -->
+        <div class="flex-1 overflow-auto p-6">
+            <router-outlet></router-outlet>
+        </div>
+    }
+
+    @if (!loading && !shop) {
+        <div class="flex flex-col items-center justify-center h-full">
+            <mat-icon [svgIcon]="'heroicons_outline:exclamation-triangle'" class="icon-size-16 text-warn"></mat-icon>
+            <p class="mt-4 text-lg">Shop not found</p>
+            <a [routerLink]="'/shops'" mat-flat-button color="primary" class="mt-4">
+                Back to Shops
+            </a>
+        </div>
+    }
+</div>

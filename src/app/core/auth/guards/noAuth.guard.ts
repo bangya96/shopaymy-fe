@@ -16,7 +16,7 @@ export const NoAuthGuard: CanActivateFn | CanActivateChildFn = (
             switchMap((authenticated) => {
                 // If the user is authenticated...
                 if (authenticated) {
-                    return of(router.parseUrl('user'));
+                    return of(router.parseUrl('shops'));
                 }
 
                 // Allow the access

@@ -33,7 +33,7 @@ export class ShopGraphqlService {
             .watchQuery<ShopsQueryResponse>({
                 query: SHOPS_QUERY,
             })
-            .valueChanges.pipe(map((result) => result.data.shops));
+            .valueChanges.pipe(map((result) => result.data.shops as Shop[]));
     }
 
     /**
@@ -45,7 +45,7 @@ export class ShopGraphqlService {
                 query: SHOP_QUERY,
                 variables: { id },
             })
-            .valueChanges.pipe(map((result) => result.data.shop));
+            .valueChanges.pipe(map((result) => result.data.shop as Shop));
     }
 
     /**

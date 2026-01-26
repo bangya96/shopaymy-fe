@@ -24,12 +24,12 @@ export const appRoutes: Route[] = [
         ]
     },
 
-    // Redirect signed-in user to the '/example'
+    // Redirect signed-in user to the '/shops'
     //
     // After the user signs in, the sign-in page will redirect the user to the 'signed-in-redirect'
     // path. Below is another redirection for that path to redirect the user to the desired
     // location. This is a small convenience to keep all main routes together here on this file.
-    {path: 'signed-in-redirect', pathMatch : 'full', redirectTo: 'example'},
+    {path: 'signed-in-redirect', pathMatch : 'full', redirectTo: 'shops'},
 
     // Auth routes for guests
     {
@@ -78,6 +78,7 @@ export const appRoutes: Route[] = [
         children: [
             {path: 'example', loadChildren: () => import('app/modules/admin/example/example.routes')},
             {path: 'user', loadChildren: () => import('app/modules/user/user.routes')},
+            {path: 'shops', loadChildren: () => import('app/modules/shops/shops.routes')},
         ]
     }
 ];
