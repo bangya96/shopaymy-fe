@@ -17,14 +17,14 @@ export class AuthSignOutComponent implements OnInit, OnDestroy {
         '=1': '# second',
         other: '# seconds',
     };
-    private _unsubscribeAll: Subject<any> = new Subject<any>();
+    private readonly _unsubscribeAll: Subject<any> = new Subject<any>();
 
     /**
      * Constructor
      */
     constructor(
-        private _authService: AuthService,
-        private _router: Router
+        private readonly _authService: AuthService,
+        private readonly _router: Router
     ) {}
 
     // -----------------------------------------------------------------------------------------------------

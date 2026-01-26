@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { Apollo } from 'apollo-angular';
 import { AuthUtils } from 'app/core/auth/auth.utils';
 import { UserService } from 'app/core/user/user.service';
-import { catchError, Observable, of, switchMap, throwError, map } from 'rxjs';
+import { catchError, Observable, of, switchMap, throwError, map, timeout } from 'rxjs';
 import {
     LOGIN_MUTATION,
     REGISTER_MUTATION,
@@ -117,7 +117,11 @@ export class AuthService {
                 fetchPolicy: 'network-only',
             })
             .pipe(
-                catchError(() => of(null)),
+                timeout(10000),
+                catchError(() => {
+                    this._authenticated = false;
+                    return of(null);
+                }),
                 switchMap((result) => {
                     // If no result or errors, return false
                     if (!result || result.error || !result.data) {

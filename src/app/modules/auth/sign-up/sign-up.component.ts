@@ -69,7 +69,6 @@ export class AuthSignUpComponent implements OnInit {
             name: ['', Validators.required],
             email: ['', [Validators.required, Validators.email]],
             password: ['', Validators.required],
-            company: [''],
             agreements: ['', Validators.requiredTrue],
         });
     }
@@ -82,6 +81,9 @@ export class AuthSignUpComponent implements OnInit {
      * Sign up
      */
     signUp(): void {
+        // Mark all fields as touched to show validation errors
+        this.signUpForm.markAllAsTouched();
+
         // Do nothing if the form is invalid
         if (this.signUpForm.invalid) {
             return;
@@ -94,27 +96,24 @@ export class AuthSignUpComponent implements OnInit {
         this.showAlert = false;
 
         // Sign up
-        this._authService.signUp(this.signUpForm.value).subscribe(
-            (response) => {
+        this._authService.signUp(this.signUpForm.value).subscribe({
+            next: (response) => {
                 // Navigate to the confirmation required page
                 this._router.navigateByUrl('/confirmation-required');
             },
-            (response) => {
+            error: (error) => {
                 // Re-enable the form
                 this.signUpForm.enable();
-
-                // Reset the form
-                this.signUpNgForm.resetForm();
 
                 // Set the alert
                 this.alert = {
                     type: 'error',
-                    message: 'Something went wrong, please try again.',
+                    message: error?.message || 'Something went wrong, please try again.',
                 };
 
                 // Show the alert
                 this.showAlert = true;
-            }
-        );
+            },
+        });
     }
 }

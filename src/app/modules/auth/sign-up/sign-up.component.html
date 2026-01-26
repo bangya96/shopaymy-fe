@@ -39,7 +39,7 @@
             }
 
             <!-- Sign Up form -->
-            <form class="mt-8" [formGroup]="signUpForm" #signUpNgForm="ngForm">
+            <form class="mt-8" [formGroup]="signUpForm" #signUpNgForm="ngForm" (ngSubmit)="signUp()">
                 <!-- Name field -->
                 <mat-form-field class="w-full">
                     <mat-label>Full name</mat-label>
@@ -99,16 +99,6 @@
                     <mat-error> Password is required </mat-error>
                 </mat-form-field>
 
-                <!-- Company field -->
-                <mat-form-field class="w-full">
-                    <mat-label>Company</mat-label>
-                    <input
-                        id="company-confirm"
-                        matInput
-                        [formControlName]="'company'"
-                    />
-                </mat-form-field>
-
                 <!-- ToS and PP -->
                 <div class="mt-1.5 inline-flex w-full items-end">
                     <mat-checkbox
@@ -135,9 +125,9 @@
                 <button
                     class="fuse-mat-button-large mt-6 w-full"
                     mat-flat-button
+                    type="submit"
                     [color]="'primary'"
                     [disabled]="signUpForm.disabled"
-                    (click)="signUp()"
                 >
                     @if (!signUpForm.disabled) {
                         <span> Create your free account </span>
